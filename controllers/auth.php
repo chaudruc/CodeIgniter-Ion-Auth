@@ -53,9 +53,16 @@ class Auth extends CI_Controller {
 	}
 
 	//log the user in
-	function login($dest_url=false)
+	function login()
 	{
 		$this->data['title'] = "Login";
+		
+		//dest url?
+		//add as a hidden field to the form
+		if($this->input->post('dest_url') > '')
+		{
+		$dest_url = $this->input->post('dest_url');
+		}
 
 		//validate form input
 		$this->form_validation->set_rules('identity', 'Identity', 'required');
