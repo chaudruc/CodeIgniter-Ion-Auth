@@ -1543,6 +1543,80 @@ class Ion_auth_model extends CI_Model
 		return TRUE;
 	}
 
+	
+	/**
+	* get_all_user_meta
+	* this will return all meta data stored in users_meta for the userid provided
+	* @return array
+	* @author Chris Chaudruc
+	**/
+	public function get_all_user_meta($id)
+	{
+	if( !$id OR !is_numeric($id) ){ $this->set_error('need user id to retrieve user meta data'); return FALSE; }
+	
+	$sql = "SELECT * FROM ".$this->tables['users_meta']." WHERE user_id = '$id';";
+	
+	$query = $this->db->query($sql);
+	
+	$resultset = $query->result_array();
+	
+	if( count($resultset) >= 1)
+	{
+	
+	foreach ($resultset as $row)
+	{
+	$metadata[$row['meta_name']][] = $row['meta_value'];
+	}
+	return $metadata;
+	}
+	
+	return false;
+	
+	}//end function
+	
+	/**
+	* get_user_meta
+	* this will return any meta data matching the userid and meta_key provided
+	* @return array
+	* @author Chris Chaudruc
+	**/
+	public function get_user_meta($id,$key)
+	{
+	if( !$id OR !is_numeric($id) ){ $this->set_error('need user id to retrieve user meta data'); return FALSE; }
+	if( !$key OR !is_numeric($key) ){ $this->set_error('need meta key to retrieve user meta data'); return FALSE; }
+	
+	}
+	
+	/**
+	* set_user_meta
+	* this will set a metadata value 
+	- if the meta_id is provided it will update that row
+	- if meta_id not provided it will create a new row
+	* @return bool
+	* @author Chris Chaudruc
+	**/
+	public function set_user_meta($id,$key,$value,$meta_id=false)
+	{
+	if( !$id OR !is_numeric($id) ){ $this->set_error('need user id to set user meta data'); return FALSE; }
+	
+	
+	}
+	
+	/**
+	* delete_user_meta
+	* this will remove a row from the user_meta table
+	* @return bool
+	* @author Chris Chaudruc
+	**/
+	public function delete_user_meta($id,$meta_id)
+	{
+	if( !$id OR !is_numeric($id) ){ $this->set_error('need user id to delete user meta data'); return FALSE; }
+	if( !$meta_id OR !is_numeric($meta_id) ){ $this->set_error('need meta id to delete user meta data'); return FALSE; }
+	
+	
+	}
+	
+	
 	/**
 	 * update_last_login
 	 *
@@ -2083,3 +2157,6 @@ class Ion_auth_model extends CI_Model
 		}
 	}
 }
+
+
+?>
