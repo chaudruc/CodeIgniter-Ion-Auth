@@ -53,7 +53,7 @@ class Auth extends CI_Controller {
 	}
 
 	//log the user in
-	function login()
+	function login($dest_url=false)
 	{
 		$this->data['title'] = "Login";
 
@@ -70,9 +70,17 @@ class Auth extends CI_Controller {
 			if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember))
 			{
 				//if the login is successful
-				//redirect them back to the home page
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
+				//if $dest_url is set
+				if($dest_url)
+				{
+				redirect($dest_url, 'refresh');
+				}
+				else
+				{
+				//redirect them back to the home page
 				redirect('/', 'refresh');
+				}
 			}
 			else
 			{
