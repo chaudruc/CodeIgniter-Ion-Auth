@@ -1619,6 +1619,8 @@ class Ion_auth_model extends CI_Model
 	{
 	if( !$id OR !is_numeric($id) ){ $this->set_error('need user id to set user meta data'); return FALSE; }
 	
+	$value = $this->db->escape_str($value);
+	
 	if($meta_id)
 	{
 	$sql = "UPDATE ".$this->tables['users_meta']." SET meta_name = '$key', meta_value = '$value' WHERE user_id = '$id' AND meta_id = '$meta_id';";
