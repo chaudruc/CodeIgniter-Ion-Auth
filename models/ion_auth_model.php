@@ -20,6 +20,9 @@
 * Description:  Modified auth system based on redux_auth with extensive customization.  This is basically what Redux Auth 2 should be.
 * Original Author name has been kept but that does not mean that the method has not been modified.
 *
+* 3/30/2013
+* Added methods to handle new user_meta table - Chris Chaudruc 
+*
 * Requirements: PHP5 or above
 *
 */
@@ -1565,7 +1568,7 @@ class Ion_auth_model extends CI_Model
 	
 	foreach ($resultset as $row)
 	{
-	$metadata[$row['meta_name']][] = $row['meta_value'];
+	$metadata[$row['meta_name']][$row['meta_id']] = $row['meta_value'];
 	}
 	return $metadata;
 	}
@@ -1585,6 +1588,23 @@ class Ion_auth_model extends CI_Model
 	if( !$id OR !is_numeric($id) ){ $this->set_error('need user id to retrieve user meta data'); return FALSE; }
 	if( !$key OR !is_numeric($key) ){ $this->set_error('need meta key to retrieve user meta data'); return FALSE; }
 	
+	$sql = "SELECT * FROM ".$this->tables['users_meta']." WHERE user_id = '$id' AND meta_name = '$key';";
+	
+	$query = $this->db->query($sql);
+	
+	$resultset = $query->result_array();
+	
+	if( count($resultset) >= 1)
+	{
+	
+	foreach ($resultset as $row)
+	{
+	$metadata[$row['meta_name']][] = $row['meta_value'];
+	}
+	return $metadata;
+	}
+	
+	return false;
 	}
 	
 	/**
@@ -1599,7 +1619,25 @@ class Ion_auth_model extends CI_Model
 	{
 	if( !$id OR !is_numeric($id) ){ $this->set_error('need user id to set user meta data'); return FALSE; }
 	
+	if($meta_id)
+	{
+	$sql = "UPDATE ".$this->tables['users_meta']." SET meta_name = '$key', meta_value = '$value' WHERE user_id = '$id' AND meta_id = '$meta_id';";
+	}
+	else
+	{
+	$sql = "INSERT INTO ".$this->tables['users_meta']." SET meta_name = '$key', meta_value = '$value', user_id = '$id';";
+	}
+	$query = $this->db->query($sql);
 	
+	$affected = $this->db->affected_rows();
+	
+	if( $affected >= 1)
+	{
+	return true;
+	}
+	
+	return false;
+
 	}
 	
 	/**
@@ -1613,6 +1651,45 @@ class Ion_auth_model extends CI_Model
 	if( !$id OR !is_numeric($id) ){ $this->set_error('need user id to delete user meta data'); return FALSE; }
 	if( !$meta_id OR !is_numeric($meta_id) ){ $this->set_error('need meta id to delete user meta data'); return FALSE; }
 	
+	$sql = "DELETE * FROM ".$this->tables['users_meta']." WHERE user_id = '$id' AND meta_id = '$meta_id';";
+	
+	$query = $this->db->query($sql);
+	
+	$affected = $this->db->affected_rows();
+	
+	if( $affected >= 1)
+	{
+	return true;
+	}
+	
+	return false;
+	
+	}
+	
+	
+	/**
+	* delete_all_user_meta
+	* this will remove all rows for the user from the user_meta table
+	* @return bool
+	* @author Chris Chaudruc
+	**/
+	public function delete_all_user_meta($id)
+	{
+	if( !$id OR !is_numeric($id) ){ $this->set_error('need user id to delete user meta data'); return FALSE; }
+	if( !$meta_id OR !is_numeric($meta_id) ){ $this->set_error('need meta id to delete user meta data'); return FALSE; }
+	
+	$sql = "DELETE * FROM ".$this->tables['users_meta']." WHERE user_id = '$id';";
+	
+	$query = $this->db->query($sql);
+	
+	$affected = $this->db->affected_rows();
+	
+	if( $affected >= 1)
+	{
+	return true;
+	}
+	
+	return false;
 	
 	}
 	
