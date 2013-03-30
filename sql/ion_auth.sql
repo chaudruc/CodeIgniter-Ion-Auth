@@ -75,6 +75,22 @@ INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES
 	(2,1,2);
 
 
+DROP TABLE IF EXISTS `users_meta`;
+
+#
+# Table structure for table 'users_meta'
+#
+
+CREATE TABLE `users_meta` (
+`meta_id` mediumint( 8 ) unsigned NOT NULL AUTO_INCREMENT ,
+`user_id` mediumint( 8 ) unsigned NOT NULL ,
+`meta_name` varchar( 250 ) NOT NULL ,
+`meta_value` text,
+PRIMARY KEY ( `meta_id` ) ,
+KEY `user_id` ( `user_id` , `meta_name` )
+);	
+	
+	
 DROP TABLE IF EXISTS `login_attempts`;
 
 #
